@@ -1,0 +1,121 @@
+import pygame
+import random
+import time
+
+# Inicializar pygame
+pygame.init()
+
+# Configuración de la pantalla
+WIDTH, HEIGHT = 600, 400
+screen = pygame.display.set_mode((WIDTH, HEIGHT))
+pygame.display.set_caption("Math Speed Challenge")
+
+# Colores
+WHITE = (255, 255, 255)
+BLACK = (0, 0, 0)
+GREEN = (34, 177, 76)
+RED = (200, 0, 0)
+BLUE = (0, 162, 232)
+
+# Fuentes
+font = pygame.font.Font(None, 40)
+title_font = pygame.font.Font(None, 50)
+
+# Niveles de dificultad
+difficulties = {"Fácil": (1, 10), "Medio": (10, 50), "Difícil": (50, 100)}
+
+def generate_question(difficulty):
+    num1 = random.randint(*difficulties[difficulty])
+    num2 = random.randint(*difficulties[difficulty])
+    operation = random.choice(["+", "-", "*", "/"])
+    
+    if operation == "/":  # Evitar decimales en división
+        num1 = num2 * random.randint(1, 10)
+    
+    question = f"{num1} {operation} {num2}"
+    answer = eval(question)
+    return question, int(answer)
+
+def draw_text(text, x, y, color=BLACK, font_type=font):
+    text_surface = font_type.render(text, True, color)
+    screen.blit(text_surface, (x, y))
+
+def game_loop(difficulty):
+    score = 0
+    running = True
+    user_answer = ""
+    question, correct_answer = generate_question(difficulty)
+    start_time = time.time()
+    
+    while running:
+        screen.fill(WHITE)
+        draw_text(f"Nivel: {difficulty}", 20, 20, BLUE, title_font)
+        draw_text(f"Puntaje: {score}", 450, 20, BLACK)
+        draw_text(question, 250, 150, BLACK, title_font)
+        draw_text(user_answer, 280, 220, GREEN, title_font)
+        
+        # Control del tiempo
+        remaining_time = 5 - (time.time() - start_time)
+        draw_text(f"Tiempo: {int(remaining_time)}", 270, 50, RED)
+        
+        if remaining_time <= 0:
+            running = False
+        
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                return
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_RETURN:
+                    if user_answer.isdigit() and int(user_answer) == correct_answer:
+                        score += 1
+                    else:
+                        running = False
+                    user_answer = ""
+                    question, correct_answer = generate_question(difficulty)
+                    start_time = time.time()
+                elif event.key == pygame.K_BACKSPACE:
+                    user_answer = user_answer[:-1]
+                elif event.unicode.isdigit():
+                    user_answer += event.unicode
+        
+        pygame.display.update()
+    
+    return score
+
+def main_menu():
+    running = True
+    while running:
+        screen.fill(WHITE)
+        draw_text("Math Speed Challenge", 150, 50, BLUE, title_font)
+        draw_text("Seleccione la dificultad:", 180, 120, BLACK)
+        
+        y_offset = 180
+        for difficulty in difficulties.keys():
+            draw_text(difficulty, 250, y_offset, BLACK)
+            y_offset += 50
+        
+        pygame.display.update()
+        
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                return
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_1:
+                    score = game_loop("Fácil")
+                elif event.key == pygame.K_2:
+                    score = game_loop("Medio")
+                elif event.key == pygame.K_3:
+                    score = game_loop("Difícil")
+                else:
+                    continue
+                
+                screen.fill(WHITE)
+                draw_text(f"Puntaje final: {score}", 200, 180, RED, title_font)
+                pygame.display.update()
+                pygame.time.delay(3000)
+                running = False
+                
+main_menu()
+pygame.quit()

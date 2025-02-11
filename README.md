@@ -31,17 +31,7 @@ python math_game.py
 3. Responde las preguntas matemáticas escribiendo el resultado y presionando `Enter` antes de que el tiempo se agote.
 4. Si te equivocas o el tiempo se acaba, el juego termina y se muestra tu puntaje final.
 
-## Capturas de pantalla
-(Agregar capturas de pantalla del juego aquí)
-
 ## Mejoras futuras
 🔹 Sonidos y efectos visuales.  
 🔹 Tabla de clasificación con los mejores puntajes.  
 🔹 Soporte para más operadores matemáticos y modos de juego.  
-
-## Contribuciones
-Si deseas contribuir con mejoras o correcciones, ¡siéntete libre de hacer un fork y enviar un pull request! 😃
-
-## Licencia
-Este proyecto está bajo la licencia MIT. Puedes usarlo y modificarlo libremente.
-
